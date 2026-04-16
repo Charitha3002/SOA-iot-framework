@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  mqtt-broker:
+    image: eclipse-mosquitto:2.0
+    container_name: mosquitto_broker
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - mosquitto-data:/mosquitto/data
+      - mosquitto-log:/mosquitto/log
+    # Command allows anonymous connections for local testing
+    command: sh -c "echo 'listener 1883\nallow_anonymous true' > /mosquitto/config/mosquitto.conf && mosquitto -c /mosquitto/config/mosquitto.conf"
+
+  device-registry:
+    build: ./device_registry
+    container_name: device_registry_api
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  protocol-translator:
+    build: ./protocol_translator
+    container_name: protocol_translator_middleware
+    ports:
+      - "3000:3000"
+    environment:
+      - MQTT_BROKER=mqtt://mqtt-broker:1883
+      - REGISTRY_API_URL=http://device-registry:8000
+    depends_on:
+      - mqtt-broker
+      - device-registry
+
+volumes:
+  mosquitto-data:
+  mosquitto-log:

@@ -1,0 +1,14 @@
+{
+  "name": "protocol-translator",
+  "version": "1.0.0",
+  "description": "Middleware to translate MQTT messages to REST API calls for IoT SOA.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "axios": "^1.4.0",
+    "express": "^4.18.2",
+    "mqtt": "^5.0.0"
+  }
+}
